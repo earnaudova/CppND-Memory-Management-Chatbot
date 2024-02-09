@@ -4,14 +4,21 @@
 GraphNode::GraphNode(int id)
 {
     _id = id;
+    _chatBot = std::make_unique<ChatBot>();
+}
+
+GraphNode::GraphNode(const GraphNode &other)
+{
+    std::cout << "GraphNode copy constructor \n";
 }
 
 GraphNode::~GraphNode()
 {
+    std::cout << "Graph node destructor called \n";
     //// STUDENT CODE
     ////
 
-    delete _chatBot; 
+    // delete _chatBot;
 
     ////
     //// EOF STUDENT CODE
@@ -34,16 +41,17 @@ void GraphNode::AddEdgeToChildNode(GraphEdge *edge)
 
 //// STUDENT CODE
 ////
-void GraphNode::MoveChatbotHere(ChatBot *chatbot)
+void GraphNode::MoveChatbotHere(ChatBot &&chatbot)
 {
-    _chatBot = chatbot;
+    _chatBot = std::make_unique<ChatBot>(std::move(chatbot));
+
     _chatBot->SetCurrentNode(this);
 }
 
 void GraphNode::MoveChatbotToNewNode(GraphNode *newNode)
 {
-    newNode->MoveChatbotHere(_chatBot);
-    _chatBot = nullptr; // invalidate pointer at source
+    newNode->MoveChatbotHere(std::move(*_chatBot));
+    _chatBot = nullptr;
 }
 ////
 //// EOF STUDENT CODE
